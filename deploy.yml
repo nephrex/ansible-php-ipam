@@ -1,6 +1,7 @@
 ---
-- hosts: all
-  user: root
+- hosts: localhost
+  user: gavin
+  become: yes
   gather_facts: true
 
   vars:
@@ -14,7 +15,7 @@
   tasks:
     - set_fact:
         db_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
-    - name: Install Prerequisites
+    - name: Install Prerequisites...
       yum:
         name:
           [
@@ -36,4 +37,45 @@
           ]
         update_cache: true
         state: present
-    
+   
+    - name: Install Python MYSQL Module...
+      pip:
+        name: pymysql
+
+ 
+    - name: Install PHP-IPAM
+      git:
+       repo: https://github.com/phpipam/phpipam.git
+       dest:  /var/www/html/ipam
+       version: 1.4
+
+
+    - name: Update IPAM folder
+      file:
+        group: nginx
+        owner: nginx
+        path: "/var/www/html/ipam"
+        state: directory
+
+    - name: Copy Certificates...
+      template:
+       src: certs/ipam.{{item}}
+       dest: /etc/ssl/ipam.{{item}}
+      with_items:
+       - crt
+       - key
+
+    - name: Update NGINX Config...
+      template:
+       src: templates/nginx.j2
+       dest: /etc/nginx/nginx.conf  
+
+
+    - name: Permit HTTP(s)...
+      firewalld:
+        service: "{{item}}"
+        permanent: yes
+        state: enabled    
+      with_items:
+        - https
+        - http
