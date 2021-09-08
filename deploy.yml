@@ -57,6 +57,11 @@
       with_items:
        - crt
        - key
+       
+    - name: Copy Cron Job...
+      template:
+       src: templates/ipam-scan
+       dest: /etc/crond.d/ipam-scan
 
     - name: Replace NGINX Config File...
       template:
@@ -103,7 +108,6 @@
       with_items:
         - httpd_can_network_connect
 
-
     - name: Start Services...
       service:
         name: "{{item}}"
@@ -148,6 +152,7 @@
         host_all: yes
         password: "{{db_root_password}}"
         state: present
+        
 
     - name: Show MariaDB Root Password...
       debug:
