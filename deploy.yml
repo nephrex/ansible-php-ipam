@@ -6,8 +6,10 @@
 
   vars:
    ipam_version: 1.4
+   scan_minutes: 15
    db_name: phpipam
    db_account: phpipam
+   db_socket: /var/lib/mysql/mysql.sock
    ipam_path: /var/www/html/ipam
    ansible_python_interpreter: /usr/bin/python3
 
@@ -43,7 +45,7 @@
       pip:
         name: pymysql
 
-    - name: Install PHP-IPAM
+    - name: Install PHP-IPAM...
       git:
        repo: https://github.com/phpipam/phpipam.git
        dest:  "{{ipam_path}}"
@@ -120,22 +122,22 @@
     - name: Create Database...
       mysql_db:
         login_user: root
-        login_unix_socket: /var/lib/mysql/mysql.sock
+        login_unix_socket: "{{db_socket}}"
         name: "{{db_name}}"
         state: present
 
     - name: Import Database...
       mysql_db:
         login_user: root
-        login_unix_socket: /var/lib/mysql/mysql.sock
+        login_unix_socket: "{{db_socket}}"
         name: "{{db_name}}"
         state: import
-        target: /var/www/html/ipam/db/SCHEMA.sql
+        target: "{{ipam_path}}/db/SCHEMA.sql"
 
     - name: Create Database User...
       mysql_user:
         login_user: root
-        login_unix_socket: /var/lib/mysql/mysql.sock
+        login_unix_socket: "{{db_socket}}"
         state: present
         name: "{{db_account}}"
         password: "{{db_password}}"
@@ -146,13 +148,12 @@
     - name: Set MariaDB Root Password...
       mysql_user:
         login_user: root
-        login_unix_socket: /var/lib/mysql/mysql.sock
+        login_unix_socket: "{{db_socket}}"
         name: "root"
         host_all: yes
         password: "{{db_root_password}}"
         state: present
         
-
     - name: Show MariaDB Root Password...
       debug:
         msg: "{{db_root_password}}"
