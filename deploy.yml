@@ -5,8 +5,6 @@
   gather_facts: true
 
   vars:
-   server_url: change.me
-   admin_email: admin@change.me
    db_name: phpipam
    db_account: phpipam
    ipam_path: /var/www/html/ipam
