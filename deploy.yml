@@ -93,7 +93,6 @@
     - name: Create Backup Account...
       user:
         name: "{{backup_user}}"
-        group: "{{backup_user}}"
         password: "!"
         shell: /bin/false
 
