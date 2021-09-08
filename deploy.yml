@@ -94,7 +94,7 @@
       user:
         name: "{{backup_user}}"
         password: "!"
-        shell: /bin/false
+        shell: /sbin/nologin
 
     - name: Update IPAM Folder Permissions... 
       file:
