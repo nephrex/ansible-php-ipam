@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  user: gavin
   become: yes
   gather_facts: true
 
@@ -11,6 +10,7 @@
    db_account: phpipam
    db_socket: /var/lib/mysql/mysql.sock
    ipam_path: /var/www/html/ipam
+   fpm_socket: /run/php-fpm/www.sock
    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
@@ -54,7 +54,7 @@
     - name: Copy Certificates...
       template:
        src: certs/ipam.{{item}}
-       dest: /etc/ssl/ipam.{{item}}
+       dest: /etc/ssl/private/ipam.{{item}}
       with_items:
        - crt
        - key
