@@ -111,7 +111,6 @@
         - {"owner": "nginx", "recurse": yes, "path": "{{ipam_path}}", "mode": 770}
         - {"owner": "{{backup_user}}", "recurse": no, "path": "{{backup_path}}", "mode": 770}
 
-
     - name: Firewall Permit HTTP(S)...
       firewalld:
         service: "{{item}}"
