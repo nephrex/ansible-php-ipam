@@ -92,6 +92,7 @@
       firewalld:
         service: "{{item}}"
         permanent: yes
+        immediate: yes
         state: enabled    
       with_items:
         - https
