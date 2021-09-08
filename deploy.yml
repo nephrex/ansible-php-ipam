@@ -54,7 +54,7 @@
     - name: Copy Certificates...
       template:
        src: certs/ipam.{{item}}
-       dest: /etc/ssl/private/ipam.{{item}}
+       dest: /etc/ssl/ipam.{{item}}
       with_items:
        - crt
        - key
