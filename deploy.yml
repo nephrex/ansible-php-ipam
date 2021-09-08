@@ -11,6 +11,7 @@
    db_account: phpipam
    db_socket: /var/lib/mysql/mysql.sock
    ipam_path: /var/www/html/ipam
+   backup_user: ipam-backup
    backup_path: /opt/ipam-backups
    fpm_socket: /run/php-fpm/www.sock
    ansible_python_interpreter: /usr/bin/python3
@@ -65,6 +66,7 @@
       template:
        src: templates/ipam.j2
        dest: /etc/cron.d/ipam
+       mode: 0600
 
     - name: Replace NGINX Config File...
       template:
@@ -88,18 +90,34 @@
         regexp: "phpipamadmin"
         replace: "{{db_password}}"
 
+    - name: Create Backup Account...
+      user:
+        name: "{{backup_user}}"
+        group: "{{backup_user}}"
+        password: "!"
+        shell: /bin/false
+
     - name: Update IPAM Folder Permissions... 
       file:
         group: nginx
         owner: nginx
         recurse: yes
-        path: "{{item}}"
+        path: "{{ipam_path}}"
         state: directory
       with_items:
         - "{{ipam_path}}"
         - "{{backup_path}}"
+
+      - name: Update Backup Folder Permissions... 
+      file:
+        group: "{{backup_user}}"
+        owner: "{{backup_user}}"
+        recurse: yes
+        path: "{{backup_path}}"
+        state: directory
+        mode: 0660
       
-    - name: Firewall Permit HTTP(s)...
+    - name: Firewall Permit HTTP(S)...
       firewalld:
         service: "{{item}}"
         permanent: yes
