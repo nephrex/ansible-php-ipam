@@ -3,7 +3,7 @@
 */{{scan_minutes}} * * * * nginx /bin/php {{ipam_path}}/functions/scripts/discoveryCheck.php
 
 # Backup IP address table, remove backups older than {{backup_retention_days}} days
-@daily {{backup_user}} /usr/bin/mysqldump -u {{db_account}} -p{{db_password}} {{db_name}} > {{backup_path}}/phpipam_backup_$(date +"%Y-%m-%d").db
+@daily {{backup_user}} /usr/bin/mysqldump -u {{db_account}} -p{{db_password}} {{db_name}} > {{backup_path}}/phpipam_backup_$(date +"\%Y-\%m-\%d").db
 @daily {{backup_user}} /usr/bin/find {{backup_path}}/ -ctime +{{backup_retention_days}} -exec rm {} \;
 
 

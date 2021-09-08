@@ -108,14 +108,14 @@
         - "{{ipam_path}}"
         - "{{backup_path}}"
 
-      - name: Update Backup Folder Permissions... 
+    - name: Update Backup Folder Permissions... 
       file:
         group: "{{backup_user}}"
         owner: "{{backup_user}}"
         recurse: yes
         path: "{{backup_path}}"
         state: directory
-        mode: 0660
+        mode: 0760
       
     - name: Firewall Permit HTTP(S)...
       firewalld:
