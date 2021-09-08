@@ -150,6 +150,5 @@
 
     - name: Show MariaDB Root Password...
       debug:
-        msg: 
-        - {{db_root_password}}
+        msg: "{{db_root_password}}"
 
