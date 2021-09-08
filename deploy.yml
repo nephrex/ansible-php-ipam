@@ -74,7 +74,7 @@
        src: templates/nginx.j2
        dest: /etc/nginx/nginx.conf
 
-    - name: Clone default PHP-FPM Socket...
+    - name: Delete default PHP-FPM Socket...
       copy:
         src: /etc/php-fpm.d/www.conf
         dest: /etc/php-fpm.d/ipam.conf
@@ -88,7 +88,12 @@
         - { 'key': '\[www\]' , 'value': '[ipam]'}
         - { 'key': 'apache' , 'value': 'nginx'}
         - { 'key': 'www.sock' , 'value': 'ipam.sock'}
-        #- { 'key': "#.*", 'value': ''}
+
+    - name: Remove Excess Comments from PHP-FPM Config...       
+      lineinfile:
+        path: /etc/php-fpm.d/ipam.conf
+        state: absent
+        regexp: '^;.*'
 
     - name: Set PHP Pool Timezone...
       lineinfile:
