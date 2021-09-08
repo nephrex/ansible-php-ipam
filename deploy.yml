@@ -5,6 +5,7 @@
   gather_facts: true
 
   vars:
+   ipam_version: 1.4
    db_name: phpipam
    db_account: phpipam
    ipam_path: /var/www/html/ipam
@@ -46,7 +47,7 @@
       git:
        repo: https://github.com/phpipam/phpipam.git
        dest:  "{{ipam_path}}"
-       version: 1.4
+       version: {{ipam_version}}
 
     - name: Copy Certificates...
       template:
