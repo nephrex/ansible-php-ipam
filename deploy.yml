@@ -35,6 +35,7 @@
             php-gmp,
             php-intl,
             php-json,
+            php-ldap,
             php-mbstring,
             php-mysqlnd,
             php-pear,
