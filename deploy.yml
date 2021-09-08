@@ -96,14 +96,14 @@
     - name: Create Database...
       mysql_db:
         login_user: root
-        login_unix_socket: /var/run/mysqld/mysqld.sock
+        login_unix_socket: /var/lib/mysql/mysql.sock
         name: "{{db_name}}"
         state: present
 
     - name: Import Database...
       mysql_db:
         login_user: root
-        login_unix_socket: /var/run/mysqld/mysqld.sock
+        login_unix_socket: /var/lib/mysql/mysql.sock
         name: "{{db_name}}"
         state: import
         target: /var/www/html/ipam/db/SCHEMA.sql
@@ -111,11 +111,12 @@
     - name: Create Database User...
       mysql_user:
         login_user: root
-        login_unix_socket: /var/run/mysqld/mysqld.sock
+        login_unix_socket: /var/lib/mysql/mysql.sock
         state: present
         name: "{{db_account}}"
         password: "{{db_password}}"
         priv: "{{db_name}}.*:ALL"
         state: present
         sql_log_bin: no
+
 
