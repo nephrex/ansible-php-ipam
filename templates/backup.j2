@@ -1,3 +1,0 @@
-# Backup IP address table, remove backups older than 10 days
-@daily nginx /usr/bin/mysqldump -u {{db_account}} -p{{db_password}} phpipam > {{ipam_path}}/db/bkp/phpipam_bkp_$(date +"\%y\%m\%d").db
-@daily nginx /usr/bin/find {{ipam_path}}/db/bkp/ -ctime +10 -exec rm {} \;
