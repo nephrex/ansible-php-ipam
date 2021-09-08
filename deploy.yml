@@ -14,7 +14,7 @@
    ipam_path: /var/www/html/ipam
    backup_user: ipam-backup
    backup_path: /opt/ipam-backups
-   fpm_socket: /run/php-fpm/ipam.sock
+   fpm_socket: /run/php-fpm/www.sock
    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
@@ -59,6 +59,9 @@
       template:
        src: certs/ipam.{{item}}
        dest: /etc/ssl/ipam.{{item}}
+       owner: nginx
+       group: nginx
+       mode: 0660
       with_items:
        - crt
        - key
@@ -69,33 +72,12 @@
        dest: /etc/cron.d/ipam
        mode: 0600
 
-    - name: Replace NGINX Config File...
+    - name: Import NGINX Config File...
       template:
        src: templates/nginx.j2
        dest: /etc/nginx/nginx.conf
 
-    - name: Delete default PHP-FPM Socket...
-      copy:
-        src: /etc/php-fpm.d/www.conf
-        dest: /etc/php-fpm.d/ipam.conf
-
-    - name: Update PHP-FPM Config File...
-      replace:
-        path: /etc/php-fpm.d/ipam.conf
-        regexp: "{{item.key}}"
-        replace: "{{item.value}}" 
-      with_items:
-        - { 'key': '\[www\]' , 'value': '[ipam]'}
-        - { 'key': 'apache' , 'value': 'nginx'}
-        - { 'key': 'www.sock' , 'value': 'ipam.sock'}
-
-    - name: Remove Excess Comments from PHP-FPM Config...       
-      lineinfile:
-        path: /etc/php-fpm.d/ipam.conf
-        state: absent
-        regexp: '^;.*'
-
-    - name: Set PHP Pool Timezone...
+    - name: Set PHP-FPM Pool Timezone...
       lineinfile:
         path: /etc/php-fpm.d/ipam.conf
         line: "php_admin_value[date.timezone] = {{timezone}}"
@@ -117,22 +99,18 @@
         password: "!"
         shell: /sbin/nologin
 
-    - name: Update IPAM Folder Permissions... 
+    - name: Update Folder Permissions... 
       file:
-        group: nginx
-        owner: nginx
-        recurse: yes
-        path: "{{ipam_path}}"
+        group: "{{item.owner}}"
+        owner: "{{item.owner}}"
+        recurse: "{{item.recurse}}"
+        path: "{{iem.path}}"
         state: directory
+      - with_items:
+        - {"owner": "nginx", "recurse": yes, "path": "{{ipam_path}}", "mode": 770}
+        - {"owner": "{{backup_user}}", "recurse": no, "path": "{{backup_path}}", "mode": 770}
 
-    - name: Update Backup Folder Permissions... 
-      file:
-        group: "{{backup_user}}"
-        owner: "{{backup_user}}"
-        path: "{{backup_path}}"
-        state: directory
-        mode: 0770
-      
+
     - name: Firewall Permit HTTP(S)...
       firewalld:
         service: "{{item}}"
