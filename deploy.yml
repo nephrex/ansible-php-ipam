@@ -47,7 +47,7 @@
       git:
        repo: https://github.com/phpipam/phpipam.git
        dest:  "{{ipam_path}}"
-       version: {{ipam_version}}
+       version: "{{ipam_version}}"
 
     - name: Copy Certificates...
       template:
@@ -60,7 +60,7 @@
     - name: Copy Cron Job...
       template:
        src: templates/ipam-scan.j2
-       dest: /etc/crond.d/ipam-scan
+       dest: /etc/cron.d/ipam-scan
 
     - name: Replace NGINX Config File...
       template:
