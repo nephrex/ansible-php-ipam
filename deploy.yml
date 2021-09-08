@@ -85,10 +85,10 @@
         regexp: "{{item.key}}"
         replace: "{{item.value}}" 
       with_items:
-        - { 'key': '[www]' , 'value': '[ipam]'}
+        - { 'key': "[www]" , 'value': "[ipam]"}
         - { 'key': 'apache' , 'value': 'nginx'}
         - { 'key': 'www.sock' , 'value': 'ipam.sock'}
-        - { 'key': '#.*', 'value': ''}
+        - { 'key': "#.*", 'value': ''}
 
     - name: Set PHP Pool Timezone...
       lineinfile:
