@@ -14,7 +14,7 @@
    ipam_path: /var/www/html/ipam
    backup_user: ipam-backup
    backup_path: /opt/ipam-backups
-   fpm_socket: /run/php-fpm/www.sock
+   fpm_socket: /run/php-fpm/ipam.sock
    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
@@ -74,11 +74,22 @@
        src: templates/nginx.j2
        dest: /etc/nginx/nginx.conf
 
+    - name: Clone default PHP-FPM Socket
+      copy:
+        src: /etc/php-fpm.d/www.conf
+        dest: /etc/php-fpm.d/ipam.conf
+
     - name: Update PHP-FPM Config File...
       replace:
         path: /etc/php-fpm.d/ipam.conf
         regexp: "www-data"
         replace: "nginx" 
+    
+    - name: Change PHP-FPM Socket...
+      replace:
+        path: /etc/php-fpm.d/ipam.conf
+        regexp: www.sock
+        replace: ipam.sock
 
     - name: Set PHP Pool Timezone...
       lineinfile:
