@@ -47,7 +47,7 @@
     - name: Install PHP-IPAM
       git:
        repo: https://github.com/phpipam/phpipam.git
-       dest:  /var/www/html/ipam
+       dest:  "{{ipam_path}}"
        version: 1.4
 
     - name: Copy Certificates...
@@ -63,7 +63,7 @@
        src: templates/nginx.conf
        dest: /etc/nginx/nginx.conf
 
-    - name: Update php-fpm Config File...
+    - name: Update PHP-FPM Config File...
       replace:
         path: /etc/php-fpm.d/www.conf
         regexp: "www-data"
@@ -85,7 +85,7 @@
         group: nginx
         owner: nginx
         recurse: yes
-        path: "/var/www/html/ipam"
+        path: "{{ipam_path}}"
         state: directory
       
     - name: Firewall Permit HTTP(s)...
@@ -139,5 +139,17 @@
         priv: "{{db_name}}.*:ALL"
         state: present
         sql_log_bin: no
+        
+    - name: Set MariaDB Root Password...
+      mysql_user:
+        login_user: root
+        login_unix_socket: /var/lib/mysql/mysql.sock
+        name: "root"
+        password: "{{db_root_password}}"
+        state: present
 
+    - name: Show MariaDB Root Password...
+      debug:
+        msg: 
+        - {{db_root_password}}
 
