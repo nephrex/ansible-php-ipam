@@ -97,6 +97,12 @@
         - https
         - http
 
+    - name: Enable SELinux Booleans...
+      command: "setsebool -P {{item}} on"
+      with_items:
+        - httpd_can_network_connect
+
+
     - name: Start Services...
       service:
         name: "{{item}}"
@@ -132,4 +138,5 @@
         priv: "{{db_name}}.*:ALL"
         state: present
         sql_log_bin: no
+
 
