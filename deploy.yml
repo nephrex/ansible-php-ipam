@@ -6,10 +6,12 @@
   vars:
    ipam_version: 1.4
    scan_minutes: 15
+   backup_retention_days: 30
    db_name: phpipam
    db_account: phpipam
    db_socket: /var/lib/mysql/mysql.sock
    ipam_path: /var/www/html/ipam
+   backup_path: /opt/ipam-backups
    fpm_socket: /run/php-fpm/www.sock
    ansible_python_interpreter: /usr/bin/python3
 
@@ -91,8 +93,11 @@
         group: nginx
         owner: nginx
         recurse: yes
-        path: "{{ipam_path}}"
+        path: "{{item}}"
         state: directory
+      with_items:
+        - "{{ipam_path}}"
+        - "{{backup_path}}"
       
     - name: Firewall Permit HTTP(s)...
       firewalld:
