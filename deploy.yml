@@ -7,6 +7,7 @@
    ipam_version: 1.4
    scan_minutes: 15
    backup_retention_days: 30
+   timezone: Australia/Sydney
    db_name: phpipam
    db_account: phpipam
    db_socket: /var/lib/mysql/mysql.sock
@@ -75,9 +76,14 @@
 
     - name: Update PHP-FPM Config File...
       replace:
-        path: /etc/php-fpm.d/www.conf
+        path: /etc/php-fpm.d/ipam.conf
         regexp: "www-data"
         replace: "nginx" 
+
+    - name: Set PHP Pool Timezone...
+      lineinfile:
+        path: /etc/php-fpm.d/ipam.conf
+        line: "php_admin_value[date.timezone] = {{timezone}}"
 
     - name: Copy IPAM Config...
       copy:
@@ -126,7 +132,7 @@
         - https
         - http
 
-    - name: Enable SELinux Booleans...
+    - name: Set SELinux Booleans...
       command: "setsebool -P {{item}} on"
       with_items:
         - httpd_can_network_connect
