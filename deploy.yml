@@ -74,7 +74,7 @@
        src: templates/nginx.j2
        dest: /etc/nginx/nginx.conf
 
-    - name: Clone default PHP-FPM Socket
+    - name: Clone default PHP-FPM Socket...
       copy:
         src: /etc/php-fpm.d/www.conf
         dest: /etc/php-fpm.d/ipam.conf
@@ -82,14 +82,13 @@
     - name: Update PHP-FPM Config File...
       replace:
         path: /etc/php-fpm.d/ipam.conf
-        regexp: "www-data"
-        replace: "nginx" 
-    
-    - name: Change PHP-FPM Socket...
-      replace:
-        path: /etc/php-fpm.d/ipam.conf
-        regexp: www.sock
-        replace: ipam.sock
+        regexp: "{{item.key}}"
+        replace: "{{item.value}}" 
+      with_items:
+        - { 'key': '[www]' , 'value': '[ipam]'}
+        - { 'key': 'apache' , 'value': 'nginx'}
+        - { 'key': 'www.sock' , 'value': 'ipam.sock'}
+        - { 'key': '#.*', 'value': ''}
 
     - name: Set PHP Pool Timezone...
       lineinfile:
@@ -120,15 +119,11 @@
         recurse: yes
         path: "{{ipam_path}}"
         state: directory
-      with_items:
-        - "{{ipam_path}}"
-        - "{{backup_path}}"
 
     - name: Update Backup Folder Permissions... 
       file:
         group: "{{backup_user}}"
         owner: "{{backup_user}}"
-        recurse: yes
         path: "{{backup_path}}"
         state: directory
         mode: 0770
