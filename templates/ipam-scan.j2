@@ -1,6 +1,6 @@
 # update host statuses exery 15 minutes
-*/15 * * * * root /bin/php {{ipam_path}}/functions/scripts/pingCheck.php
-*/15 * * * * root /bin/php {{ipam_path}}/functions/scripts/discoveryCheck.php
+*/{{scan_minutes}} * * * * nginx /bin/php {{ipam_path}}/functions/scripts/pingCheck.php
+*/{{scan_minutes}} * * * * nginx /bin/php {{ipam_path}}/functions/scripts/discoveryCheck.php
 
 
 
