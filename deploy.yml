@@ -9,7 +9,6 @@
    admin_email: admin@change.me
    db_name: phpipam
    db_account: phpipam
-   new_cert: false
    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
@@ -54,6 +53,7 @@
       file:
         group: nginx
         owner: nginx
+        recurse: yes
         path: "/var/www/html/ipam"
         state: directory
 
@@ -65,11 +65,16 @@
        - crt
        - key
 
-    - name: Update NGINX Config...
+    - name: Replace NGINX Config File...
       template:
-       src: templates/nginx.j2
-       dest: /etc/nginx/nginx.conf  
+       src: templates/nginx.conf
+       dest: /etc/nginx/nginx.conf
 
+    - name: Update php-fpm Config File...
+      replace:
+        path: /etc/php-fpm.d/www.conf
+        regexp: "www-data"
+        replace: "nginx"      
 
     - name: Permit HTTP(s)...
       firewalld:
@@ -79,3 +84,4 @@
       with_items:
         - https
         - http
+
