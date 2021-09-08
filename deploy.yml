@@ -65,7 +65,7 @@
 
     - name: Replace NGINX Config File...
       template:
-       src: templates/nginx.conf
+       src: templates/nginx.j2
        dest: /etc/nginx/nginx.conf
 
     - name: Update PHP-FPM Config File...
