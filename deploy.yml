@@ -79,7 +79,7 @@
 
     - name: Set PHP-FPM Pool Timezone...
       lineinfile:
-        path: /etc/php-fpm.d/ipam.conf
+        path: /etc/php-fpm.d/www.conf
         line: "php_admin_value[date.timezone] = {{timezone}}"
 
     - name: Copy IPAM Config...
@@ -106,7 +106,7 @@
         recurse: "{{item.recurse}}"
         path: "{{iem.path}}"
         state: directory
-      - with_items:
+      with_items:
         - {"owner": "nginx", "recurse": yes, "path": "{{ipam_path}}", "mode": 770}
         - {"owner": "{{backup_user}}", "recurse": no, "path": "{{backup_path}}", "mode": 770}
 
