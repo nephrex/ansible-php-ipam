@@ -60,7 +60,7 @@
        
     - name: Copy Cron Job...
       template:
-       src: templates/ipam-scan
+       src: templates/ipam-scan.j2
        dest: /etc/crond.d/ipam-scan
 
     - name: Replace NGINX Config File...
