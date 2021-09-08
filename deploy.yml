@@ -9,11 +9,14 @@
    admin_email: admin@change.me
    db_name: phpipam
    db_account: phpipam
+   ipam_path: /var/www/html/ipam
    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
     - set_fact:
         db_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
+        db_root_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits') }}"
+
     - name: Install Prerequisites...
       yum:
         name:
@@ -47,14 +50,6 @@
        dest:  /var/www/html/ipam
        version: 1.4
 
-    - name: Update IPAM Folder Permissions... 
-      file:
-        group: nginx
-        owner: nginx
-        recurse: yes
-        path: "/var/www/html/ipam"
-        state: directory
-
     - name: Copy Certificates...
       template:
        src: certs/ipam.{{item}}
@@ -72,9 +67,28 @@
       replace:
         path: /etc/php-fpm.d/www.conf
         regexp: "www-data"
-        replace: "nginx"      
+        replace: "nginx" 
 
-    - name: Permit HTTP(s)...
+    - name: Copy IPAM Config...
+      copy:
+        src: "{{ipam_path}}/config.dist.php"
+        dest: "{{ipam_path}}/config.php"
+  
+    - name: Update IPAM Config File...
+      replace:
+        path: "{{ipam_path}}/config.php"
+        regexp: "phpipamadmin"
+        replace: "{{db_password}}"
+
+    - name: Update IPAM Folder Permissions... 
+      file:
+        group: nginx
+        owner: nginx
+        recurse: yes
+        path: "/var/www/html/ipam"
+        state: directory
+      
+    - name: Firewall Permit HTTP(s)...
       firewalld:
         service: "{{item}}"
         permanent: yes
@@ -118,5 +132,4 @@
         priv: "{{db_name}}.*:ALL"
         state: present
         sql_log_bin: no
-
 
