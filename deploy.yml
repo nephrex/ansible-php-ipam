@@ -4,7 +4,7 @@
   gather_facts: true
 
   vars:
-   ipam_version: 1.4
+   ipam_version: 1.5
    scan_minutes: 15
    backup_retention_days: 30
    timezone: Australia/Sydney
